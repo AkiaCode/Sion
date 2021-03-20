@@ -1,8 +1,11 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-use rocket::{Request, request::{self, FromRequest, Outcome}, response::Redirect};
+use rocket::{Request, request::{self, FromRequest, Outcome}, response::content};
 use serde_yaml::Value;
 
+
 #[macro_use] extern crate rocket;
+extern crate requests;
+
 #[derive(Debug)]
 struct Req {
     uri: String
@@ -17,7 +20,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Req {
 }
 
 #[get("/")]
-fn redirect(request: Req) -> Redirect {
+fn redirect(request: Req) -> content::Html<String> {
    let uri=  link(&request.uri).unwrap();
    let port: String = match  uri.clone().parse::<usize>() {
        Ok(_) => "http://localhost:".to_owned() + &uri,
@@ -29,8 +32,8 @@ fn redirect(request: Req) -> Redirect {
            }
        }
    };
-   //println!("{}", port);
-   Redirect::to(port)
+   let response = requests::get(port).unwrap();
+   return content::Html(response.text().unwrap().to_string())
 }
 
 fn link(req: &str) -> Result<String, ()> {
@@ -48,5 +51,6 @@ fn link(req: &str) -> Result<String, ()> {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![redirect]).launch();
+    rocket::ignite()
+        .mount("/", routes![redirect]).launch();
 }

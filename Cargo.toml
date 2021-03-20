@@ -9,3 +9,9 @@ edition = "2018"
 [dependencies]
 rocket = "0.4.7"
 serde_yaml = "0.8"
+requests = "0.0.30"
+
+[dependencies.rocket_contrib]
+version = "0.4.7"
+default-features = false
+features = ["handlebars_templates", "tera_templates"]
