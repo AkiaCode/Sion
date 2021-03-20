@@ -1,0 +1,2 @@
+bounce:
+  localhost:8000: 80 # localhost'로 접속했을때 80포트에서 돌아가고 있는 웹서버로 연결시켜 줌
